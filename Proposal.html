@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>📊 Happy-CEO Sales System — Vibration Plate Edition</title>
+  <style>
+    /* ===== Reset & Base ===== */
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0a0a0b;
+      --surface:#111113;
+      --card:#18181b;
+      --ink:#fafafa;
+      --ink-dim:#a1a1aa;
+      --border:rgba(255,255,255,.08);
+
+      --accent:#3b82f6;     /* blue */
+      --success:#10b981;    /* green (good arrows) */
+      --warn:#f59e0b;       /* amber */
+      --error:#ef4444;      /* red (pain X bullets) */
+    }
+    html{scroll-behavior:smooth}
+    body{
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Helvetica,Arial,sans-serif;
+      background:var(--bg); color:var(--ink);
+      line-height:1.6; font-size:16px; -webkit-font-smoothing:antialiased
+    }
+
+    /* ===== Shell ===== */
+    .container{max-width:100%;min-height:100vh}
+    .header{
+      background:linear-gradient(to bottom,#1e293b, var(--surface));
+      padding:24px 16px;border-bottom:1px solid var(--border)
+    }
+    .tag{
+      display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+      color:var(--accent);background:rgba(59,130,246,.12);
+      padding:4px 8px;border-radius:6px;margin-bottom:10px
+    }
+    h1{font-size:24px;font-weight:800;line-height:1.2;margin-bottom:8px}
+
+    /* Slightly more pronounced subtitle (cohesive with theme) */
+    .subtitle{
+      font-size:14px;line-height:1.45;font-weight:600;
+      color:color-mix(in oklab, var(--accent) 25%, var(--ink-dim));
+    }
+
+    /* Pills (nav) */
+    .nav{
+      display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+      padding:14px 16px;background:var(--surface);border-bottom:1px solid var(--border)
+    }
+    .nav::-webkit-scrollbar{display:none}
+    .pill{
+      flex-shrink:0;padding:6px 12px;border-radius:999px;background:var(--card);
+      border:1px solid var(--border);font-size:13px;font-weight:600;color:var(--ink-dim);text-decoration:none
+    }
+    .pill:active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+    /* Sections */
+    .section{padding:20px 16px;border-bottom:1px solid var(--border)}
+    .section-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .badge{
+      width:28px;height:28px;border-radius:10px;background:var(--accent);
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;font-size:12px;color:#fff;flex-shrink:0
+    }
+    h2{font-size:18px;font-weight:700}
+
+    /* Executive Summary */
+    .summary-card{
+      background:var(--card);border:1px solid var(--border);
+      border-radius:12px;padding:16px;box-shadow:0 10px 24px rgba(0,0,0,.18)
+    }
+    .lede{font-size:15.75px;line-height:1.65;margin-bottom:8px;color:var(--ink)}
+    .lede b{font-weight:800;color:color-mix(in oklab, var(--accent) 28%, var(--ink))}
+
+    /* Lists — compact & hierarchical */
+    ul{list-style:none;margin:10px 0}
+    .list{padding-left:1.2rem}
+    .list>li{
+      position:relative;margin:8px 0;padding-left:.2rem;
+      font-size:14.5px;color:var(--ink-dim);line-height:1.55
+    }
+    .list>li::before{
+      content:"→";position:absolute;left:-1.1rem;top:0;color:var(--success);font-weight:800
+    }
+    .list strong{color:var(--ink)}
+    .list .sub{margin:6px 0 2px;padding-left:1.15rem}
+    .list .sub>li{margin:6px 0}
+    .list .sub>li::before{left:-1rem;opacity:.9}
+
+    /* NEW: Pain list with little red X's, same spacing as .list */
+    .badlist{padding-left:1.2rem;margin:6px 0 22px}
+    .badlist>li{
+      position:relative;margin:6px 0;padding-left:.2rem;
+      font-size:14.25px;color:color-mix(in oklab, var(--error) 20%, var(--ink-dim));
+      line-height:1.55
+    }
+    .badlist>li::before{
+      content:"✖"; /* little red x */
+      position:absolute;left:-1.1rem;top:0.1rem;
+      color:var(--error);font-weight:800;font-size:13px
+    }
+
+    /* Result banner */
+    .result{
+      background:linear-gradient(135deg,var(--success),#059669);
+      border-radius:10px;text-align:center;padding:10px 12px;margin-top:12px;
+      font-size:14px;font-weight:700;color:#06130e
+    }
+
+    /* Message blocks (SMS-style examples) */
+    .msg{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin:10px 0}
+    .msg .label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:6px}
+    .msg .content{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13.25px;color:var(--ink-dim);line-height:1.5;white-space:pre-wrap}
+
+    /* Cards */
+    .card-lite{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+
+    /* Investment / ROI */
+    .price-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
+    .price-row:last-child{border-bottom:none}
+    .price-label{color:var(--ink-dim)}
+    .price-value{color:var(--warn);font-weight:700}
+    .roi-box{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.28);border-radius:10px;padding:12px;margin-top:12px}
+    .roi-title{font-size:14px;font-weight:800;color:var(--success);margin-bottom:6px}
+    .roi-item{font-size:13.5px;color:var(--ink-dim);margin:4px 0}
+    .payback{background:var(--success);color:#06130e;border-radius:8px;padding:8px;text-align:center;font-size:13px;font-weight:800;margin-top:8px}
+
+    /* Tablet+ */
+    @media (min-width:768px){
+      .container{max-width:680px;margin:0 auto}
+      .header{padding:32px 24px}
+      .nav{padding:18px 24px}
+      .section{padding:24px}
+      h1{font-size:30px}
+      h2{font-size:20px}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <span class="tag">Vibration Plate Edition</span>
+      <h1>📊 Happy-CEO Sales System</h1>
+      <p class="subtitle">Transform paper + VAs into a digital powerhouse with automated capture, commissions, and real-time visibility.</p>
+    </header>
+
+    <!-- Pills -->
+    <nav class="nav">
+      <a class="pill" href="#summary">Summary</a>
+      <a class="pill" href="#capture">Capture</a>
+      <a class="pill" href="#alerts">Alerts</a>
+      <a class="pill" href="#events">Events</a>
+      <a class="pill" href="#commission">Commission</a>
+      <a class="pill" href="#defense">Defense</a>
+      <a class="pill" href="#invest">Investment</a>
+    </nav>
+
+    <!-- Executive Summary -->
+    <section id="summary" class="section">
+      <div class="section-header">
+        <div class="badge">ES</div><h2>Executive Summary</h2>
+      </div>
+      <div class="summary-card">
+        <p class="lede">
+          <b>Sales currently rely on VAs, disjointed processes, and scattered spreadsheets — causing:</b>
+        </p>
+        <!-- NEW: Pain bullets with red X's -->
+        <ul class="badlist">
+          <li>lost sales data</li>
+          <li>messy disputes</li>
+          <li>frustrating payroll</li>
+          <li>poor visibility</li>
+        </ul>
+
+        <ul class="list">
+          <li>Capture every sale with proof (wet signature + customer selfie).</li>
+          <li>Drive real competition with live alerts & leaderboards.</li>
+          <li>Automate commissions → penny-perfect payouts <em>(and 0 headaches)</em>.</li>
+          <li>Give leadership a command center view of every event.</li>
+          <li>Protect against chargebacks with bulletproof documentation.</li>
+        </ul>
+        <div class="result">👉 More sales, crystal clear visibility, effortless chargebacks, compliant automated payroll, total control.</div>
+      </div>
+    </section>
+
+    <!-- 1. Two-Step Capture -->
+    <section id="capture" class="section">
+      <div class="section-header">
+        <div class="badge">1</div><h2>Two-Step Sales Capture & Database</h2>
+      </div>
+      <ul class="list">
+        <li><strong>Step 1:</strong> Rep snaps a photo of the <em>current signed form</em> (no change) → system scans instantly.</li>
+        <li><strong>Step 2:</strong> Rep gets a text to confirm sale details + add customer selfie.</li>
+      </ul>
+      <div class="card-lite" style="margin-top:10px">
+        ✅ Secure, permanent database. Searchable by customer, rep, or event.
+      </div>
+    </section>
+
+    <!-- 2. Live Alerts -->
+    <section id="alerts" class="section">
+      <div class="section-header">
+        <div class="badge">2</div><h2>Live Sales Alerts That Drive Competition</h2>
+      </div>
+      <div class="msg">
+        <div class="label">Team Channel</div>
+        <div class="content">🔥 John just sold 2 units!
+<strong>Leaderboard:</strong>
+• John: 4 units @$8,450 total
+• Sarah: 3 units @$6,800 total
+• Jane: 2 units @$3,900 total</div>
+      </div>
+      <div class="msg">
+        <div class="label">Leadership Updates</div>
+        <div class="content">Show updates — you're increasing!
+• Denver: 12 units $42,500 @ $3,350 avg (Final)
+• Chicago: 11 units $41,250 @ $2,790 avg (Live)
+• Austin: 8 units $38,800 @ $3,190 avg (Live)</div>
+      </div>
+    </section>
+
+    <!-- 3. Event Command Center -->
+    <section id="events" class="section">
+      <div class="section-header">
+        <div class="badge">3</div><h2>Event Command Center</h2>
+      </div>
+      <ul class="list">
+        <li>See every event: pending, live, or completed.</li>
+        <li>Know which reps are scheduled.</li>
+        <li>Track units sold, revenue, true margins, commissions, and net profit.</li>
+      </ul>
+    </section>
+
+    <!-- 4. Commission Reports -->
+    <section id="commission" class="section">
+      <div class="section-header">
+        <div class="badge">4</div><h2>Commission Reports (No Manual Entry)</h2>
+      </div>
+      <ul class="list">
+        <li>Reps receive professional branded emails with exact payouts.</li>
+        <li>You receive a bank-ready payout file — effortless & penny-perfect.</li>
+        <li>Bonuses/deductions are built in, automatically applied, and tracked.</li>
+      </ul>
+    </section>
+
+    <!-- 5. Chargeback Defense -->
+    <section id="defense" class="section">
+      <div class="section-header">
+        <div class="badge">5</div><h2>Simplified Chargeback Defense</h2>
+      </div>
+      <ul class="list">
+        <li>Search any transaction in seconds.</li>
+        <li>Pull signed form + selfie tied to the sale.</li>
+        <li>Auto-deduct rep commission when a chargeback hits.</li>
+      </ul>
+    </section>
+
+    <!-- Investment & ROI -->
+    <section id="invest" class="section">
+      <div class="section-header">
+        <div class="badge">💰</div><h2>Investment & ROI</h2>
+      </div>
+
+      <div class="card-lite" style="margin-bottom:12px">
+        <div class="price-row">
+          <span class="price-label">One-Time Setup</span>
+          <span class="price-value">$8,250</span>
+        </div>
+        <div class="price-row">
+          <span class="price-label">Payment Terms</span>
+          <span class="price-value" style="color:#fff">50% upfront • 25% at Milestone 1 • 25% at Delivery</span>
+        </div>
+        <div class="price-row">
+          <span class="price-label">Ongoing Maintenance</span>
+          <span class="price-value">$425 / month</span>
+        </div>
+        <div class="price-row">
+          <span class="price-label">Includes</span>
+          <span class="price-value" style="color:var(--ink-dim);font-weight:600">databases • automations • AI tokens • messaging fees</span>
+        </div>
+      </div>
+
+      <!-- Optional Add-On Discount -->
+      <div class="card-lite" style="margin-top:12px;border-color:rgba(59,130,246,.28)">
+        <div style="font-weight:800;margin-bottom:6px;color:var(--accent)">⭐ Optional Add-On Discount</div>
+        <div style="font-weight:800;margin-bottom:6px">
+          📦 Inventory &amp; Shipping Database —
+          <span style="color:var(--accent)">$2,790</span>
+          <span style="color:var(--ink-dim);text-decoration:line-through;margin-left:6px">$5,500</span>
+        </div>
+        <ul class="list">
+          <li>Track every unit, location, and shipment.</li>
+          <li>Automated shipment notifications + address verification.</li>
+          <li>Link inventories & deliveries directly to sales records.</li>
+          <li>Return management with reason codes.</li>
+        </ul>
+      </div>
+
+      <div class="card-lite" style="margin-top:12px">
+        <div class="roi-box">
+          <div class="roi-title">ROI Examples</div>
+          <div class="roi-item">• Remove 2–3 VAs → save $1K–4K/month</div>
+          <div class="roi-item">• Leadership gains 20+ hours/week</div>
+          <div class="roi-item">• Competition boost → +10–20% revenue</div>
+          <div class="payback">Payback: 2–4 months (VA savings alone)</div>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
